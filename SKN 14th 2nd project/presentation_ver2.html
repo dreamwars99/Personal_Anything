@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>미션 임파서블: 도망가는 학생을 찾아라! - 학교탈출넘버원</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Nanum Gothic', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* 나눔고딕 우선 적용 */
+            line-height: 1.75;
+            margin: 0;
+            padding: 25px 0;
+            background-color: #f8f9fa; /* 더 밝은 배경 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: #343a40; /* 기본 텍스트 색상 */
+        }
+        .presentation-container {
+            width: 90%;
+            max-width: 980px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+        }
+        .slide {
+            padding: 40px 50px;
+            min-height: 500px;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            border-bottom: 1px dashed #e0e0e0; /* 슬라이드 구분선 변경 */
+        }
+        .slide:last-child {
+            border-bottom: none;
+        }
+        .slide.active {
+            display: flex;
+        }
+        h1, h2, h3, h4 { /* h4 추가 */
+            color: #212529;
+            margin-bottom: 25px;
+            font-weight: 700; /* 제목 폰트 굵게 */
+        }
+        h1 { font-size: 2.6em; text-align: center; line-height: 1.3; color: #0056b3; } /* 메인 타이틀 색상 변경 */
+        h2 { font-size: 2em; color: #007bff; border-bottom: 3px solid #dee2e6; padding-bottom: 15px; display: flex; align-items: center;}
+        h3 { font-size: 1.5em; color: #17a2b8; margin-top: 25px; margin-bottom: 15px;} /* h3 스타일 추가 */
+        h4 { font-size: 1.2em; color: #6c757d; margin-top: 20px; margin-bottom: 10px;} /* h4 스타일 추가 */
+        h2 i, h3 i { margin-right: 15px; font-size: 0.9em; }
+        ul, ol {
+            margin-left: 10px;
+            padding-left: 30px;
+            text-align: left;
+            list-style: none;
+        }
+        li {
+            margin-bottom: 12px;
+            position: relative;
+            padding-left: 10px;
+            font-size: 1.05em; /* 본문 폰트 약간 키움 */
+        }
+        li i {
+            margin-right: 10px;
+            color: #007bff; /* 목록 아이콘 색상 */
+            font-size: 1em; /* 아이콘 크기 조정 */
+            vertical-align: middle; /* 아이콘 세로 정렬 */
+        }
+        strong { color: #dc3545; /* 강조 텍스트 컬러 변경 */ font-weight: 600;}
+        .slide p { text-align: left; margin-bottom: 18px; font-size: 1.05em;}
+        .slide-footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e9ecef; /* 푸터 배경색 변경 */
+            border-top: 1px solid #ced4da;
+        }
+        .slide-footer button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1.05em;
+            margin: 4px 8px;
+            cursor: pointer;
+            border-radius: 25px; /* 버튼 더 둥글게 */
+            transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .slide-footer button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .slide-footer button:active {
+            transform: translateY(0px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        #slide-number { margin: 0 25px; font-weight: bold; color: #495057; font-size: 1em;}
+
+        /* 유머/강조 스타일 */
+        .text-mission { color: #fd7e14; font-weight: bold;} /* 미션 타이틀용 */
+        .text-team { color: #20c997; font-weight: bold;} /* 팀명용 */
+        .text-aha { color: #ffc107; font-weight: bold;} /* 유레카! 같은 느낌 */
+        .text-sad { color: #6c757d; font-style: italic;} /* 아쉬움 표현 */
+        .text-focus { background-color: #fff3cd; padding: 2px 5px; border-radius: 3px; color: #856404;} /* 주목! */
+        .img-placeholder {
+            width: 80%;
+            height: 200px; /* 실제 이미지 크기에 맞게 조절 */
+            background-color: #e9ecef;
+            border: 2px dashed #adb5bd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+        }
+        .center-text { text-align: center !important; }
+        .big-icon-title { font-size: 3.5em; margin-bottom: 20px; color: #007bff; }
+        .final-message { font-size: 1.3em; font-weight: bold; margin-top: 30px; color: #28a745;}
+        .script-note { display:none; } /* 스크립트는 기본 숨김 */
+    </style>
+</head>
+<body>
+
+    <div class="presentation-container">
+
+        <!-- 슬라이드 1: 오프닝 - 우리의 미션! -->
+        <div class="slide active" id="slide1">
+            <div class="script-note">스크립트: "안녕하십니까. 오늘 저희 <학교탈출넘버원> 팀은 '미션 임파서블: 도망가는 학생을 찾아라!'라는 주제로 진행한 프로젝트에 대해 발표하겠습니다. 발표를 맡은 OOO입니다."</div>
+            <div class="center-text"><i class="fas fa-user-secret big-icon-title text-mission"></i></div>
+            <h1><span class="text-mission">"미션 임파서블: 도망가는 학생을 찾아라!"</span></h1>
+            <h3 class="center-text">팀명: <span class="text-team"><학교탈출넘버원></span></h3>
+            <p class="center-text">(팀장: AAA, 팀원: BBB, CCC, DDD, EEE)</p>
+            <p class="center-text" style="margin-top: 20px; font-size: 1.2em;">발표자: <strong>EEE</strong></p>
+        </div>
+
+        <!-- 슬라이드 2: 아이스 브레이킹 - 웃음으로 시작! -->
+        <div class="slide" id="slide2">
+            <div class="script-note">스크립트: "본격적인 발표에 앞서, 저희 팀이 이번 프로젝트를 진행하며 겪었던 여러 과정을 이 그림으로 표현해 보았습니다. 쉽지 않은 과정이었지만, 학생들을 위한다는 마음으로 끝까지 완수할 수 있었습니다."</div>
+            <h2><i class="fas fa-laugh-wink"></i>아이스 브레이킹 - <span style="color: #fd7e14;">시작하며</span></h2>
+            <div class="img-placeholder"> (여기에 관련된 재미있는 밈 또는<br>학교생활 관련 유머러스한 그림 삽입 공간) <br><i class="far fa-image" style="font-size: 2em; margin-top:10px;"></i></div>        </div>
+
+        <!-- 슬라이드 3: 문제 제기 - 심각한데? 이대로 괜찮은가? -->
+        <div class="slide" id="slide3">
+            <div class="script-note">스크립트: "먼저 문제 제기입니다. 교육 현장에서는 학생들의 중도 포기율이 중요한 문제로 인식되고 있습니다. 수업 진도나 난이도 등 다양한 요인이 원인이 될 수 있습니다. 또한, 교육자분들께서 모든 학생을 개별적으로 관리하는 데에는 현실적인 어려움이 따릅니다. 저희는 이러한 상황에 주목하여, 주어진 '고객 이탈'이라는 주제를 교육 현장의 '학생 이탈' 문제로 확장하여 해결하고자 했습니다. 저희가 제안하는 솔루션은 학생 정보를 입력받아 AI를 통해 이탈 가능성을 예측하고, 선제적인 학생 케어를 지원하는 것입니다."</div>
+            <h2><i class="fas fa-exclamation-triangle"></i>문제 제기 - <span style="color: #dc3545;">현황과 필요성</span></h2>
+            <h3><i class="fas fa-user-graduate"></i>"학생 중도 이탈 현황"</h3>
+            <p>교육 현장에서의 중도 포기율과 그로 인한 문제점. (수업 진도, 난이도 등 관련 요인)</p>
+            <h3><i class="fas fa-chalkboard-teacher"></i>"교육자의 현실적 어려움"</h3>
+            <p>모든 학생에 대한 개별적 관리의 한계. <span class="text-focus">데이터는 존재하지만, 분석 및 활용의 어려움.</span></p>
+            <h3><i class="fas fa-lightbulb text-warning"></i>"주제 확장 및 아이디어 도출"</h3>
+            <p>주어진 '고객 이탈' 주제를 교육 현장의 '학생 이탈' 문제로 적용하여 해결 방안 모색.</p>
+            <div class="highlight-box" style="border-left-color: #28a745; margin-top:25px;">
+                 <p><i class="fas fa-cogs text-success"></i><strong>솔루션 제안:</strong> 학생 정보 입력 → <span style="font-weight:bold;">AI 기반 이탈 예측</span> → 선제적 학생 지원!</p>
+            </div>
+        </div>
+
+        <!-- 슬라이드 4: 데이터 탐험 - 어떤 보물섬인가? -->
+        <div class="slide" id="slide4">
+            <div class="script-note">스크립트: "본 연구에서는 다음 데이터셋을 활용했습니다. 캐글에 공개된 'Higher Education Predictors of Student Retention' 데이터로, 해당 링크에서 확인하실 수 있습니다. 이 데이터는 총 4,424명 학생의 기록과 35개의 초기 컬럼으로 구성되어 있습니다. 주요 컬럼으로는 입학 나이, 성적 평균, 결혼 상태, 채무 여부, 부모님 관련 정보 등이 포함되어 있으며, 심지어 GDP와 같은 거시경제 지표도 포함되어 있었습니다. 저희가 예측하고자 하는 타겟 변수는 초기에 '졸업', '재학', '중퇴' 세 가지 상태로 정의되었습니다. 궁극적인 목표는 이 데이터를 활용하여 교육자의 학생 관리를 효율적으로 지원하는 것입니다."</div>
+            <h2><i class="fas fa-database"></i>데이터 소개 - <span style="color: #17a2b8;">활용 데이터셋</span></h2>
+            <h3><i class="fab fa-kaggle"></i>데이터셋 출처 및 기본 정보</h3>
+            <p><a href="https://www.kaggle.com/datasets/thedevastator/higher-education-predictors-of-student-retention" target="_blank">Kaggle Dataset Link</a></p>
+            <div class="img-placeholder">(위 링크의 스크린샷 및 [실제 데이터] 시각 자료 삽입 공간)</div>
+            <p><i class="fas fa-users"></i>데이터 규모: 학생 <strong>4,424명</strong>, 초기 <strong>35개</strong> 컬럼.</p>
+            <h3><i class="fas fa-search"></i>주요 컬럼 및 타겟 변수</h3>
+            <p>입학 정보, 학업 성취도, 개인 배경 정보, 경제 지표 등 다양한 특성 포함.</p>
+            <p><i class="fas fa-crosshairs"></i>초기 <strong>타겟(Target) 변수</strong>: 졸업 / <strong>재학</strong> / 중퇴.</p>
+            <p style="margin-top:20px;"><i class="fas fa-flag-checkered text-success"></i><strong>프로젝트 목표:</strong> 데이터 분석을 통한 <strong>효율적 학생 관리 지원</strong>.</p>
+        </div>
+
+        <!-- 슬라이드 5 ~ 10: 데이터 길들이기 (전처리 과정) - 내용은 이전과 유사하게 구성. 각 Part 제목에 맞는 아이콘 추가, 스크립트 톤만 수정 -->
+        <!-- 예시: 슬라이드 5 -->
+        <div class="slide" id="slide5">
+            <div class="script-note">스크립트: "다음은 데이터 전처리 과정입니다. 먼저 기본적인 데이터 탐색 및 준비 단계를 거쳤습니다. 모델의 공정한 평가를 위해 데이터를 훈련, 검증, 테스트 세트로 분할하였고, 데이터 내 결측치를 확인한 결과, 해당 데이터셋은 결측치가 없는 양호한 상태였습니다. 이후 타겟 변수와 다른 특성들 간의 상관관계 분석을 시작하여, 최종 모델링에 사용할 주요 특성을 선별하는 기초 작업을 진행했습니다."</div>
+             <h2><i class="fas fa-wrench"></i>데이터 전처리 Part 1 - <span style="color: #6f42c1;">기본 탐색 및 준비</span></h2>
+             <ul>
+                <li><i class="fas fa-th-large"></i>데이터 분할: 훈련/검증/테스트 세트 분리</li>
+                <li><i class="fas fa-check-double text-success"></i>결측치 확인: 결측치 없음 (데이터 정제 상태 양호)</li>
+                <li><i class="fas fa-link"></i>상관관계 분석: 타겟 변수와 주요 특성 간 관계 파악</li>
+                <li><i class="fas fa-bullseye"></i>목표: 모델링을 위한 <span class="text-focus">핵심 특성 선별</span> 기반 마련.</li>
+             </ul>
+        </div>
+
+        <!-- 슬라이드 6: 데이터 길들이기 Part 2 - 수상한 0점의 비밀 -->
+        <div class="slide" id="slide6">
+            <div class="script-note">스크립트: "데이터 탐색 과정에서 성적 관련 변수의 분포를 시각화한 결과, 0점 값에 데이터가 집중된 특이점을 발견했습니다. 이것이 단순한 결측치인지, 아니면 다른 의미를 내포하는지 분석할 필요가 있었습니다. 저희는 이것이 특정 상태의 학생 정보가 일괄적으로 처리된 결과일 가능성을 염두에 두었습니다."</div>
+            <h2><i class="fas fa-user-secret"></i>데이터 전처리 Part 2 - <span style="color: #6f42c1;">0점 데이터 분석</span></h2>
+            <div class="img-placeholder">(성적 분포 시각화 시 0점에 데이터가 몰려있는 그래프 그림 삽입 공간)</div>
+            <h3><i class="fas fa-question"></i>"성적 0점 데이터의 의미 분석"</h3>
+            <p>단순 결측치인지, 특정 상태를 나타내는지에 대한 고찰.</p>
+            <p><i class="fas fa-lightbulb text-warning"></i>가설: <span class="text-focus">특정 그룹 학생 정보의 일괄 처리 가능성.</span></p>
+        </div>
+
+        <!-- 슬라이드 7: 데이터 길들이기 Part 3 - 0점 제거의 마법! -->
+        <div class="slide" id="slide7">
+            <div class="script-note">스크립트: "가설 검증 및 모델 성능에 미칠 영향을 고려하여, 0점 데이터를 일시적으로 제외하고 데이터 분포를 재확인했습니다. 그 결과, 보다 일반적인 성적 분포 패턴을 관찰할 수 있었습니다. 이러한 0점 데이터를 어떻게 최종적으로 처리할 것인지에 대한 팀 내부 논의가 있었습니다."</div>
+            <h2><i class="fas fa-magic"></i>데이터 전처리 Part 3 - <span style="color: #6f42c1;">0점 데이터 처리 검토</span></h2>
+            <div class="img-placeholder">(0점 제거 후 성적 분포 그래프 그림 삽입 공간)</div>
+            <p><i class="fas fa-bolt text-warning"></i><strong>0점 데이터 제외 후 분포 변화 확인.</strong></p>
+            <p><i class="fas fa-brain"></i>고민: "0점 데이터의 최종 처리 방안이 모델 성능에 미칠 영향 분석." <span class="text-sad">(이 부분에 대한 팀의 논의 과정이나 고민을 간략히 언급)</span></p>
+        </div>
+
+        <!-- 슬라이드 8: 데이터 길들이기 Part 4 - 히트맵으로 보는 그들만의 리그! -->
+        <div class="slide" id="slide8">
+            <div class="script-note">스크립트: "다음으로, 전체 특성 간의 상관관계를 히트맵으로 시각화하여 분석했습니다. 이를 통해 특정 변수들 간의 강한 연관성을 파악할 수 있었습니다. 예를 들어, 성적 관련 컬럼들 간에는 예상대로 높은 상관관계가 나타났으며, 국적과 국제 학생 여부 같은 변수도 논리적인 연관성을 보였습니다. 이러한 분석을 통해, 계산 효율성 및 모델의 과대적합 방지를 고려하여 최종적으로 사용할 주요 특성들을 선별하는 기준으로 삼았습니다."</div>
+            <h2><i class="fas fa-th"></i>데이터 전처리 Part 4 - <span style="color: #6f42c1;">특성 간 상관관계 분석</span></h2>
+            <div class="img-placeholder">(전체 컬럼 히트맵 상관관계 그림 삽입 공간)</div>
+            <p><i class="fas fa-search-location text-danger"></i><strong>주요 변수 간 연관성 파악.</strong></p>
+            <ul>
+                <li><i class="fas fa-star text-warning"></i>성적 관련 특성 간 높은 상관도 확인.</li>
+                <li><i class="fas fa-globe-americas"></i>일부 인구통계학적 변수 간 연관성 분석.</li>
+            </ul>
+            <p><i class="fas fa-balance-scale-right"></i>결론: 계산 효율성 및 과대적합 방지를 고려하여 <span class="text-danger">주요 특성 위주로 선별 결정.</span></p>
+        </div>
+
+        <!-- 슬라이드 9: 데이터 길들이기 Part 5 - 최종 정예 멤버 선발! -->
+        <div class="slide" id="slide9">
+            <div class="script-note">스크립트: "앞선 EDA 및 상관관계 분석 결과를 바탕으로, 모델 학습에 실제 사용될 최종 18개의 특성을 선정했습니다. 선정 기준으로는 타겟 변수와의 관련성, 다중공선성 문제 최소화, 모델 해석의 용이성 등을 종합적으로 고려했습니다."</div>
+            <h2><i class="fas fa-users-cog"></i>데이터 전처리 Part 5 - <span style="color: #6f42c1;">최종 특성 선정</span></h2>
+            <div class="img-placeholder">(선정된 18개 컬럼 리스트 또는 시각화 그림 삽입 공간)</div>
+            <p><i class="fas fa-clipboard-check"></i>선정 기준: 타겟 변수 관련성, 다중공선성, 모델 해석 용이성 등.</p>
+        </div>
+
+        <!-- 슬라이드 10: 데이터 길들이기 Part 6 - 모델을 위한 최종 변신! -->
+        <div class="slide" id="slide10">
+            <div class="script-note">스크립트: "선정된 특성들을 머신러닝 모델이 학습 가능한 형태로 변환하는 최종 전처리 단계를 진행했습니다. 범주형 데이터는 원-핫 인코딩을, 수치형 데이터는 표준화 스케일링을 적용했습니다. 이후 모델의 학습 및 평가를 위해 데이터를 훈련 세트와 테스트 세트로 분리하였습니다. (검증 세트 분리 여부에 대한 논의가 있었음을 언급할 수 있습니다.)"</div>
+            <h2><i class="fas fa-hat-wizard"></i>데이터 전처리 Part 6 - <span style="color: #6f42c1;">최종 데이터셋 구축</span></h2>
+            <p><i class="fas fa-random"></i>범주형 및 수치형 데이터 변환 필요성 인지.</p>
+            <p><i class="fas fa-magic text-warning"></i><strong>원-핫 인코딩 & 스케일링 적용.</strong> <span class="text-sad">(각 기법의 필요성 및 효과 간략 설명)</span></p>
+            <p><i class="fas fa-columns"></i>학습용 / 테스트용 데이터 분할.</p>
+            <p><i class="fas fa-question-circle text-info"></i><span class="text-sad">(검증 세트 분리 여부 및 결정 사항 언급)</span></p>
+        </div>
+
+        <!-- 슬라이드 11: 머신러닝 1차 시도 - 📉 아, 이게 아닌가벼... -->
+        <div class="slide" id="slide11">
+             <div class="script-note">스크립트: "전처리를 마친 데이터로 다양한 머신러닝 모델을 적용하여 1차 성능 평가를 진행했습니다. 그러나 초기 모델들의 정확도는 기대에 미치지 못하는 약 70% 수준에 머물렀습니다. 이에 대한 원인 분석이 필요했습니다."</div>
+             <h2><i class="fas fa-chart-line" style="transform: rotate(180deg); color: #dc3545;"></i>머신러닝 1차 시도 - <span class="text-danger">초기 결과 분석</span></h2>
+             <div class="img-placeholder">(정확도 0.7점대 등 초기 결과 그래프 또는 표 삽입 공간)</div>
+             <p class="center-text" style="margin-top: 30px;"><i class="fas fa-search text-warning"></i><span class="text-focus">성능 저하 원인 분석 및 개선 방향 모색.</span></p>
+        </div>
+
+        <!-- 슬라이드 12: 유레카! - '재학생' 너 때문이었구나! -->
+        <div class="slide" id="slide12">
+            <div class="script-note">스크립트: "성능 저하의 주요 원인 중 하나로 '재학생(Enrolled)' 클래스의 모호성을 지목했습니다. 이 클래스는 졸업 또는 중퇴로 이어질 수 있는 중간 상태로, 모델 학습에 혼란을 야기할 수 있다고 판단했습니다. 실제 데이터 분포에서도 '재학생' 클래스는 794명으로 적지 않은 비중을 차지했지만, 예측 목표의 명확성을 위해 이 클래스를 제외하고 이진 분류 문제로 전환하는 과감한 결정을 내렸습니다."</div>
+            <h2><i class="fas fa-lightbulb text-warning"></i>문제점 진단 - <span class="text-aha">"재학생" 데이터의 영향</span></h2>
+            <h3><i class="fas fa-user-clock"></i>"재학생 데이터의 불확실성"</h3>
+            <p>졸업/중퇴 여부가 결정되지 않은 상태로, 모델 학습에 노이즈로 작용 가능성.</p>
+            <h4><i class="fas fa-chart-pie"></i>'Target' 열 클래스별 분포 (제거 전)</h4>
+            <ul>
+                <li><i class="fas fa-user-graduate text-success"></i>Graduate: 2209명</li>
+                <li><i class="fas fa-user-minus text-danger"></i>Dropout: 1421명</li>
+                <li><i class="fas fa-user text-info"></i><strong>Enrolled: 794명</strong> (제외 결정)</li>
+            </ul>
+            <p style="margin-top:25px; text-align:center; font-weight:bold; font-size:1.1em;" class="text-danger"><i class="fas fa-scissors"></i>결정: "예측 목표 명확화를 위해 'Enrolled' 클래스 제외 및 이진 분류로 전환."</p>
+        </div>
+
+        <!-- 슬라이드 13: 머신러닝 2차 시도 - ✨ 빛이 보이기 시작했다! -->
+        <div class="slide" id="slide13">
+            <div class="script-note">스크립트: "재학생 데이터를 제외하고 이진 분류 문제로 재구성한 결과, 모델 성능이 획기적으로 향상되었습니다. 대부분의 모델에서 정확도가 90% 이상으로 상승했으며, 이 중 LightGBM이 가장 우수한 성능을 보였습니다. 이후 주요 모델들을 대상으로 랜덤 서치 및 그리드 서치와 같은 하이퍼파라미터 튜닝 기법을 적용하여 모델의 성능을 더욱 최적화하고자 노력했습니다."</div>
+            <h2><i class="fas fa-rocket text-success"></i>머신러닝 2차 시도 - <span class="text-success">성능 개선</span></h2>
+            <p><i class="fas fa-tachometer-alt text-success"></i><strong>이진 분류 전환 후 정확도 대폭 향상.</strong> (실제 향상 수치 제시)</p>
+            <p><i class="fas fa-medal text-warning"></i>상위 성능 모델 선정 (<span class="text-focus">LightGBM</span> 등).</p>
+            <h3><i class="fas fa-tools"></i>하이퍼파라미터 튜닝</h3>
+            <p>RandomizedSearchCV, GridSearchCV를 통한 최적 파라미터 탐색 과정 요약.</p>
+            <div class="img-placeholder">(튜닝 과정이나 결과 비교 그래프 삽입 공간)</div>
+        </div>
+
+        <!-- 슬라이드 14: 딥러닝 도전! - AI의 또 다른 가능성 탐색 -->
+        <div class="slide" id="slide14">
+            <div class="script-note">스크립트: "추가적으로, 딥러닝 모델의 적용 가능성을 확인하기 위해 기본적인 인공신경망(ANN) 모델을 구성하여 테스트했습니다. 과대적합 방지 및 효율적인 학습을 위해 EarlyStopping 기법을 활용했습니다. (딥러닝 모델 결과 및 머신러닝 모델과의 비교 간략히 언급). 현재 데이터셋에서는 머신러닝 모델이 우세했으나, 딥러닝의 잠재력을 확인할 수 있었습니다."</div>
+            <h2><i class="fas fa-brain"></i>딥러닝 모델 적용 - <span style="color: #6610f2;">추가 분석</span></h2>
+            <p><i class="fas fa-network-wired"></i>딥러닝(ANN) 모델 구성 및 적용.</p>
+            <p><i class="far fa-clock"></i><strong>EarlyStopping:</strong> 과대적합 방지 및 학습 효율 증대.</p>
+            <p><i class="fas fa-poll-h"></i>결과 및 시사점: (머신러닝 모델 대비 성능 및 향후 가능성 언급).</p>
+            <p style="text-align:center; font-weight:bold; margin-top:20px;" class="text-info"><i class="fas fa-infinity"></i>다양한 알고리즘 적용 시도.</p>
+        </div>
+
+        <!-- 슬라이드 15: 스트림릿 웹앱 - 우리의 결과물을 눈앞에! -->
+        <div class="slide" id="slide15">
+             <div class="script-note">스크립트: "최종 선정된 모델을 활용하여, 사용자가 직접 학생 정보를 입력하고 예측 결과를 확인할 수 있는 스트림릿(Streamlit) 기반 웹 애플리케이션 프로토타입을 개발했습니다. (화면 구성 및 주요 기능 시연 또는 스크린샷 제시)"</div>
+             <h2><i class="fas fa-laptop-code"></i>결과 시각화 - <span style="color: #fd7e14;">스트림릿 웹 애플리케이션</span></h2>
+             <p><i class="fas fa-paint-brush"></i>스트림릿을 활용한 예측 모델 시각화 및 사용자 인터페이스 개발.</p>
+             <div class="img-placeholder" style="height: auto; display:flex; flex-direction:column; gap:10px;">
+                (스트림릿 웹앱 - 학생 정보 입력 화면 스크린샷) <br>
+                <i class="fas fa-arrow-down" style="font-size:1.5em;"></i><br>
+                (스트림릿 웹앱 - 예측 결과 화면 스크린샷) <br>
+                <i class="fas fa-arrow-down" style="font-size:1.5em;"></i><br>
+                (스트림릿 웹앱 - (가능하다면) 추가 분석 정보 화면 스크린샷)
+            </div>
+        </div>
+
+        <!-- 슬라이드 16: 시스템 활용 방안 - 그래서 이걸로 뭘 할 수 있는데? -->
+        <div class="slide" id="slide16">
+            <div class="script-note">스크립트: "개발된 시스템은 교육 현장에서 다양하게 활용될 수 있습니다. 실시간 예측을 통해 중퇴 위험군 학생을 조기에 식별하고, 이들에게 맞춤형 상담 및 지원 프로그램을 연계하는 데 효과적인 도구가 될 수 있습니다. 또한, 데이터 기반의 학생 관리 문화를 정착시키는 데도 기여할 것으로 기대합니다. 궁극적으로 학생들의 중퇴율을 낮추고 졸업률을 높여, 긍정적인 교육 성과를 창출하는 데 목표를 두고 있습니다."</div>
+            <h2><i class="fas fa-user-friends"></i>시스템 활용 방안 - <span style="color: #28a745;">기대 효과 및 적용</span></h2>
+            <p><i class="fas fa-hands-helping text-success"></i><strong>실시간 예측:</strong> 학생 정보 기반 즉각적인 중퇴/졸업 가능성 확인.</p>
+            <p><i class="fas fa-bell text-warning"></i>위험군 학생 <span class="text-focus">조기 경보</span> 및 선제적 대응 지원.</p>
+            <p><i class="fas fa-comment-medical"></i><strong>맞춤형 지원:</strong> 예측 결과 기반 상담 및 프로그램 연계.</p>
+            <p><i class="fas fa-chart-pie text-info"></i>데이터 기반 학생 관리 문화 정착 기여.</p>
+            <div class="highlight-box" style="border-left-color: #28a745; margin-top:25px; background-color: #e6ffee;">
+                 <p style="font-weight:bold;"><i class="fas fa-graduation-cap text-success"></i>기대 효과: 중퇴율 감소, 졸업률 향상, 교육 자원 효율적 배분.</p>
+            </div>
+        </div>
+
+        <!-- 슬라이드 17: 결론 및 제언 - 우리의 여정은 계속된다! -->
+        <div class="slide" id="slide17">
+            <div class="script-note">스크립트: "본 프로젝트를 통해 LightGBM 모델을 사용하여 약 91.2%의 정확도로 학생의 중퇴 또는 졸업을 예측하는 시스템의 기반을 마련했습니다. 이는 데이터 기반 학생 지원에 있어 의미 있는 성과입니다. 향후 모델 성능의 지속적인 개선, 모델 예측 결과에 대한 해석 기능 강화, 실제 사용자의 피드백을 반영한 시스템 고도화, 그리고 효과적인 개입 전략 수립 등의 과제가 남아있습니다. 저희 팀은 AI 기술이 모든 학생의 성공적인 학업 여정을 지원하는 데 기여할 수 있도록 지속적으로 노력하겠습니다."</div>
+            <h2><i class="fas fa-trophy text-warning"></i>결론 및 제언 - <span style="color: #0056b3;">향후 발전 방향</span></h2>
+            <p><i class="fas fa-check-circle text-success"></i><strong>최종 성과:</strong> LightGBM 모델 기반 <span class="text-focus">약 91.2% 예측 정확도 달성.</span></p>
+            <p><i class="fas fa-lightbulb text-info"></i>프로젝트 의의: 데이터 기반 학생 지원 시스템의 실효성 확인.</p>
+            <h3><i class="fas fa-arrow-alt-circle-up"></i>향후 발전 방향</h3>
+            <ul>
+                <li><i class="fas fa-brain"></i>모델 성능 지속 개선 (데이터 추가, 고급 Feature Engineering 등)</li>
+                <li><i class="fas fa-comment-dots"></i>모델 예측 결과의 설명력 강화 (XAI 기법 적용)</li>
+                <li><i class="fas fa-users"></i>사용자 중심 인터페이스(UI/UX) 개선</li>
+                <li><i class="fas fa-medkit"></i>효과적인 중재(Intervention) 전략 개발 및 적용</li>
+            </ul>
+            <p class="final-message center-text"><i class="fas fa-school"></i>"AI와 함께, 모든 학생의 <span class="text-team">성공적인 학업 완수</span>를 지원합니다!" <i class="fas fa-thumbs-up"></i></p>
+        </div>
+
+        <!-- 슬라이드 18: Q&A - 궁금한 건 못 참지! -->
+        <div class="slide" id="slide18">
+             <div class="script-note">스크립트: "이상으로 저희 <학교탈출넘버원> 팀의 발표를 모두 마치겠습니다. 경청해주셔서 대단히 감사합니다. 질문이 있으시면 편하게 해 주시기 바랍니다."</div>
+             <div class="center-text"><i class="fas fa-comments big-icon-title" style="color:#17a2b8;"></i></div>
+            <h2 class="center-text" style="border-bottom:none; font-size: 2.5em;">❓ Q & A ❓</h2>
+            <p class="center-text" style="font-size: 1.3em; margin-top: 40px;">질문 있으시면 말씀해주십시오.</p>
+            <p class="center-text" style="font-size: 1.3em; margin-top: 30px;">지금까지 <span class="text-team"><학교탈출넘버원></span>이었습니다. 감사합니다! <i class="fas fa-hands-clapping" style="color: #ffc107;"></i></p>
+        </div>
+
+    </div>
+
+    <div class="slide-footer">
+        <button onclick="prevSlide()"><i class="fas fa-chevron-left"></i> 이전</button>
+        <span id="slide-number">1 / 18</span>
+        <button onclick="nextSlide()">다음 <i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <script>
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.presentation-container .slide');
+        const slideNumberDisplay = document.getElementById('slide-number');
+        const totalSlides = slides.length;
+
+        function showSlide(index) {
+            slides.forEach((slide) => {
+                slide.classList.remove('active');
+            });
+            slides[index].classList.add('active');
+            slideNumberDisplay.textContent = `${index + 1} / ${totalSlides}`;
+        }
+
+        function nextSlide() {
+            currentSlideIndex = (currentSlideIndex + 1) % totalSlides;
+            showSlide(currentSlideIndex);
+        }
+
+        function prevSlide() {
+            currentSlideIndex = (currentSlideIndex - 1 + totalSlides) % totalSlides;
+            showSlide(currentSlideIndex);
+        }
+        showSlide(currentSlideIndex); // 초기 슬라이드 표시
+    </script>
+</body>
+</html>
