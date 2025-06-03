@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>미션 임파서블: 도망가는 학생을 찾아라! - 학교탈출넘버원</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Nanum Gothic', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* 나눔고딕 우선 적용 */
+            line-height: 1.75;
+            margin: 0;
+            padding: 25px 0;
+            background-color: #f8f9fa; /* 더 밝은 배경 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: #343a40; /* 기본 텍스트 색상 */
+        }
+        .presentation-container {
+            width: 90%;
+            max-width: 980px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+        }
+        .slide {
+            padding: 40px 50px;
+            min-height: 500px;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            border-bottom: 1px dashed #e0e0e0; /* 슬라이드 구분선 변경 */
+        }
+        .slide:last-child {
+            border-bottom: none;
+        }
+        .slide.active {
+            display: flex;
+        }
+        h1, h2, h3, h4 { /* h4 추가 */
+            color: #212529;
+            margin-bottom: 25px;
+            font-weight: 700; /* 제목 폰트 굵게 */
+        }
+        h1 { font-size: 2.6em; text-align: center; line-height: 1.3; color: #0056b3; } /* 메인 타이틀 색상 변경 */
+        h2 { font-size: 2em; color: #007bff; border-bottom: 3px solid #dee2e6; padding-bottom: 15px; display: flex; align-items: center;}
+        h3 { font-size: 1.5em; color: #17a2b8; margin-top: 25px; margin-bottom: 15px;} /* h3 스타일 추가 */
+        h4 { font-size: 1.2em; color: #6c757d; margin-top: 20px; margin-bottom: 10px;} /* h4 스타일 추가 */
+        h2 i, h3 i { margin-right: 15px; font-size: 0.9em; }
+        ul, ol {
+            margin-left: 10px;
+            padding-left: 30px;
+            text-align: left;
+            list-style: none;
+        }
+        li {
+            margin-bottom: 12px;
+            position: relative;
+            padding-left: 10px;
+            font-size: 1.05em; /* 본문 폰트 약간 키움 */
+        }
+        li i {
+            margin-right: 10px;
+            color: #007bff; /* 목록 아이콘 색상 */
+            font-size: 1em; /* 아이콘 크기 조정 */
+            vertical-align: middle; /* 아이콘 세로 정렬 */
+        }
+        strong { color: #dc3545; /* 강조 텍스트 컬러 변경 */ font-weight: 600;}
+        .slide p { text-align: left; margin-bottom: 18px; font-size: 1.05em;}
+        .slide-footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e9ecef; /* 푸터 배경색 변경 */
+            border-top: 1px solid #ced4da;
+        }
+        .slide-footer button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1.05em;
+            margin: 4px 8px;
+            cursor: pointer;
+            border-radius: 25px; /* 버튼 더 둥글게 */
+            transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .slide-footer button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .slide-footer button:active {
+            transform: translateY(0px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        #slide-number { margin: 0 25px; font-weight: bold; color: #495057; font-size: 1em;}
+
+        /* 유머/강조 스타일 */
+        .text-mission { color: #fd7e14; font-weight: bold;} /* 미션 타이틀용 */
+        .text-team { color: #20c997; font-weight: bold;} /* 팀명용 */
+        .text-aha { color: #ffc107; font-weight: bold;} /* 유레카! 같은 느낌 */
+        .text-sad { color: #6c757d; font-style: italic;} /* 아쉬움 표현 */
+        .text-focus { background-color: #fff3cd; padding: 2px 5px; border-radius: 3px; color: #856404;} /* 주목! */
+        .img-placeholder {
+            width: 80%;
+            height: 200px; /* 실제 이미지 크기에 맞게 조절 */
+            background-color: #e9ecef;
+            border: 2px dashed #adb5bd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+        }
+        .center-text { text-align: center !important; }
+        .big-icon-title { font-size: 3.5em; margin-bottom: 20px; color: #007bff; }
+        .final-message { font-size: 1.3em; font-weight: bold; margin-top: 30px; color: #28a745;}
+        .script-note { display:none; } /* 스크립트는 기본 숨김 */
+    </style>
+</head>
+<body>
+
+    <div class="presentation-container">
+
+        <!-- 슬라이드 1: 오프닝 - 우리의 미션! -->
+        <div class="slide active" id="slide1">
+            <div class="script-note">스크립트 뉘앙스: "여러분, 오늘 저희 <학교탈출넘버원> 팀이 불가능해 보이는 미션에 도전했습니다! 바로... (잠시停(정지)) 도망가는 학생들을 찾는 것입니다!"</div>
+            <div class="center-text"><i class="fas fa-user-secret big-icon-title text-mission"></i></div>
+            <h1><span class="text-mission">"미션 임파서블: 도망가는 학생을 찾아라!"</span></h1>
+            <h3 class="center-text">팀명: <span class="text-team"><학교탈출넘버원></span></h3>
+            <p class="center-text">(팀장: AAA, 팀원: BBB, CCC, DDD, EEE)</p>
+            <p class="center-text" style="margin-top: 20px; font-size: 1.2em;">발표자: <strong>EEE</strong></p>
+        </div>
+
+        <!-- 슬라이드 2: 아이스 브레이킹 - 웃음으로 시작! -->
+        <div class="slide" id="slide2">
+            <div class="script-note">스크립트 뉘앙스: "사실 저희도 이 프로젝트 하면서 몇 번 도망갈 뻔했습니다... (웃음 유도) 하지만! 학생들을 위해 꾹 참고 여기까지 왔습니다!"</div>
+            <h2><i class="fas fa-laugh-wink"></i>아이스 브레이킹 - <span style="color: #fd7e14;">웃음 한 스푼!</span></h2>
+            <div class="img-placeholder"> (여기에 관련된 재미있는 밈 또는<br>학교생활 관련 유머러스한 그림 삽입 공간) <br><i class="far fa-image" style="font-size: 2em; margin-top:10px;"></i></div>
+            <p class="center-text text-sad" style="margin-top: 30px;">"저희의 심정을 대변하는 그림입니다... (농담 반 진담 반 😉)"</p>
+        </div>
+
+        <!-- 슬라이드 3: 문제 제기 - 심각한데? 이대로 괜찮은가? -->
+        <div class="slide" id="slide3">
+            <!-- 스크립트 ... -->
+            <h2><i class="fas fa-exclamation-triangle"></i>문제 제기 - <span style="color: #dc3545;">이대로 괜찮은가?</span></h2>
+            <h3><i class="fas fa-user-graduate"></i>"학생들이 사라진다!?"</h3>
+            <p>교육 현장의 안타까운 현실, 높은 중도 포기율. (수업 진도, 난이도 등)</p>
+            <h3><i class="fas fa-chalkboard-teacher"></i>"선생님도 사람이다!"</h3>
+            <p>모든 학생을 완벽히 케어하기 힘든 현실적 고충. <span class="text-focus">"데이터는 쌓이는데, 분석할 시간이 어디 있나요!"</span></p>
+            <h3><i class="fas fa-lightbulb text-warning"></i>"고객 이탈? <span style="text-decoration: line-through;">No!</span> 우린 학생 이탈!"</h3>
+            <p>주어진 주제를 교육 현장의 문제로 확장한 <span class="text-aha">번뜩이는 아이디어!</span></p>
+            <div class="highlight-box" style="border-left-color: #28a745; margin-top:25px;">
+                 <p><i class="fas fa-cogs text-success"></i><strong>우리의 솔루션 제안:</strong> 학생 정보 입력 → <span style="font-weight:bold;">AI 기반 탈주율(?) 예측</span> → 선제적 케어 지원!</p>
+            </div>
+        </div>
+
+        <!-- 슬라이드 4: 데이터 탐험 - 어떤 보물섬인가? -->
+        <div class="slide" id="slide4">
+            <!-- 스크립트 ... -->
+            <h2><i class="fas fa-database"></i>데이터 탐험 - <span style="color: #17a2b8;">어떤 보물섬인가?</span></h2>
+            <h3><i class="fab fa-kaggle"></i>데이터셋 출처 및 기본 정보</h3>
+            <p><a href="https://www.kaggle.com/datasets/thedevastator/higher-education-predictors-of-student-retention" target="_blank">Kaggle Dataset Link</a> (클릭 가능!)</p>
+            <div class="img-placeholder">(위 링크의 스크린샷 및 [실제 데이터] 시각 자료 삽입 공간)<br>"바로 이 데이터를 활용했습니다!"</div>
+            <p><i class="fas fa-users"></i>데이터 규모: 학생 <strong>4424명</strong>의 기록, 초기 <strong>35개</strong>의 다양한 정보(컬럼).</p>
+            <h3><i class="fas fa-search"></i>주요 컬럼 엿보기</h3>
+            <p>입학 나이, 성적 평균, 주/야간 수업, 결혼 상태, 채무 여부, 성별, 부모님 학력/직업, 심지어 <span class="text-focus">GDP</span>까지!</p>
+            <p><i class="fas fa-crosshairs"></i>우리의 최종 보스몹, 아니 <span style="font-weight:bold;">타겟(Target) 변수</span>: 졸업 / <strong>재학</strong> / 중퇴 (초기 상태)</p>
+            <p style="margin-top:20px;"><i class="fas fa-flag-checkered text-success"></i><strong>궁극적 목표:</strong> 이 데이터로 선생님들의 <strong>"학생 관리 만렙 달성"</strong> 지원!</p>
+        </div>
+
+        <!-- 슬라이드 5 ~ 10: 데이터 길들이기 (전처리 과정) - 내용은 이전과 유사하게 구성. 각 Part 제목에 맞는 아이콘 추가 -->
+        <!-- 예시: 슬라이드 5 -->
+        <div class="slide" id="slide5">
+             <h2><i class="fas fa-wrench"></i>데이터 길들이기 Part 1 - <span style="color: #6f42c1;">기본기 다지기</span></h2>
+             <ul>
+                <li><i class="fas fa-th-large"></i>데이터 분할: 훈련/검증/테스트 세트 (모델의 공정한 평가를 위함!)</li>
+                <li><i class="fas fa-check-double text-success"></i>결측치 체크: <span class="text-aha">"어라? 결측치가 0개?"</span> (데이터 정제 상태 양호, But 방심은 금물!)</li>
+                <li><i class="fas fa-link"></i>상관관계 분석 시작: 타겟 변수와 어떤 정보들이 끈끈한 관계인지 파악!</li>
+                <li><i class="fas fa-bullseye"></i>목표: 최종 모델링을 위한 <span class="text-focus">"알짜배기 컬럼"</span> 선별 작업의 서막.</li>
+             </ul>
+        </div>
+
+        <!-- 슬라이드 6: 데이터 길들이기 Part 2 - 수상한 0점의 비밀 -->
+        <div class="slide" id="slide6">
+            <h2><i class="fas fa-user-secret"></i>데이터 길들이기 Part 2 - <span style="color: #6f42c1;">수상한 0점의 비밀</span></h2>
+            <div class="img-placeholder">(성적 분포 시각화 시 0점에 데이터가 몰려있는 그래프 그림 삽입 공간)<br>"이 그래프, 뭔가 수상하지 않나요? <i class="fas fa-search"></i>"</div>
+            <h3><i class="fas fa-question"></i>"성적 0점, 너의 정체는?"</h3>
+            <p>단순 결측? 아니면 다른 심오한 의미가...? <span class="text-sad">(두둥)</span></p>
+            <p><i class="fas fa-lightbulb text-warning"></i>우리의 추리: <span class="text-focus">"혹시... 이미 학교를 떠난 학생들의 흔적 아닐까요?"</span> (일괄 처리 가능성)</p>
+        </div>
+
+        <!-- 슬라이드 7: 데이터 길들이기 Part 3 - 0점 제거의 마법! -->
+        <div class="slide" id="slide7">
+            <h2><i class="fas fa-magic"></i>데이터 길들이기 Part 3 - <span style="color: #6f42c1;">0점 제거의 마법!</span></h2>
+            <div class="img-placeholder">(0점 제거 후 성적 분포 그래프 그림 삽입 공간)<br>"짜잔! 0점을 없애니 그래프가 확 달라졌습니다! <i class="fas fa-chart-line"></i>"</div>
+            <p><i class="fas fa-bolt text-warning"></i><strong>"0점의 저주(?)가 풀리다!"</strong>: 데이터 분포의 극적인 변화 확인.</p>
+            <p><i class="fas fa-brain"></i>고민의 시작: "이 0점 데이터를 어떻게 처리해야 모델 성능에 도움이 될까?" <span class="text-sad">(이 부분에 대한 팀의 논의 과정이나 고민을 PPT에 간략히 추가 예정임을 언급)</span></p>
+        </div>
+
+        <!-- 슬라이드 8: 데이터 길들이기 Part 4 - 히트맵으로 보는 그들만의 리그! -->
+        <div class="slide" id="slide8">
+            <h2><i class="fas fa-th"></i>데이터 길들이기 Part 4 - <span style="color: #6f42c1;">히트맵으로 보는 그들만의 리그!</span></h2>
+            <div class="img-placeholder">(전체 컬럼 히트맵 상관관계 그림 삽입 공간)<br>"변수들의 속마음을 한번 들여다볼까요? <i class="far fa-eye"></i>"</div>
+            <p><i class="fas fa-search-location text-danger"></i><strong>"딱 걸렸어! 너네 둘이 친했구나?"</strong>: 유독 붉게/푸르게 표시되는 영역 집중 조명.</p>
+            <ul>
+                <li><i class="fas fa-star text-warning"></i>성적 관련 컬럼들의 강력한 유대감: <span class="text-focus">"역시... 잘하는 사람은 계속 잘하고... (잠시 침묵)"</span></li>
+                <li><i class="fas fa-globe-americas"></i>국적과 국제 학생 여부: "당연히 관련 있겠죠? 하지만 우리의 타겟과는... <span class="text-sad">글쎄요?</span>"</li>
+            </ul>
+            <p><i class="fas fa-balance-scale-right"></i>개발자의 딜레마와 결단: <span class="text-danger">"팩트는 아프지만, 여기서 좌절할 순 없다!"</span> → 계산 효율성 및 과대적합 방지를 위해 성적 관련 주요 컬럼만 선별 결정!</p>
+        </div>
+
+        <!-- 슬라이드 9: 데이터 길들이기 Part 5 - 최종 정예 멤버 선발! -->
+        <div class="slide" id="slide9">
+            <h2><i class="fas fa-users-cog"></i>데이터 길들이기 Part 5 - <span style="color: #6f42c1;">최종 정예 멤버 선발!</span></h2>
+            <div class="img-placeholder">(선정된 18개 컬럼 리스트 또는 시각화 그림 삽입 공간)<br>"치열한 경쟁을 뚫고 살아남은 최종 18명의 용사들입니다! <i class="fas fa-crown text-warning"></i>"</div>
+            <p><i class="fas fa-clipboard-check"></i>선정 기준 간략히 재언급: 타겟 변수와의 상관관계, 다중공선성, 모델 해석 용이성 등 고려.</p>
+        </div>
+
+        <!-- 슬라이드 10: 데이터 길들이기 Part 6 - 모델을 위한 최종 변신! -->
+        <div class="slide" id="slide10">
+            <h2><i class="fas fa-hat-wizard"></i>데이터 길들이기 Part 6 - <span style="color: #6f42c1;">모델을 위한 최종 변신!</span></h2>
+            <p><i class="fas fa-random"></i>범주형과 숫자형 데이터의 공존 상태 언급. <span class="text-sad">("아직은 뒤죽박죽이죠?")</span></p>
+            <p><i class="fas fa-magic text-warning"></i><strong>원-핫 인코딩 & 스케일링 마법!</strong> <span class="text-sad">(이 작업의 필요성과 효과에 대한 간략한 설명 - PPT에 추가 논의 필요함을 명시)</span></p>
+            <p><i class="fas fa-columns"></i>학습용 vs 테스트용 데이터 분리! (모델의 공정한 시험을 위해!)</p>
+            <p><i class="fas fa-question-circle text-info"></i><span class="text-sad">(검증 세트 분리 여부? - PPT에 추가 논의 필요함을 명시)</span></p>
+        </div>
+
+        <!-- 슬라이드 11: 머신러닝 1차 시도 - 📉 아, 이게 아닌가벼... -->
+        <div class="slide" id="slide11">
+             <h2><i class="fas fa-chart-line" style="transform: rotate(180deg); color: #dc3545;"></i>머신러닝 1차 시도 - <span class="text-danger">아, 이게 아닌가벼...</span></h2>
+             <div class="img-placeholder">(정확도 0.7점대 등 기대에 못 미치는 결과 그래프 또는 표 삽입 공간)<br>"음... 기대했던 결과는 이게 아닌데요... <i class="far fa-sad-tear"></i>"</div>
+             <p class="center-text" style="margin-top: 30px;"><i class="fas fa-search text-warning"></i><span class="text-focus">"혹시... 뭔가 놓친 게 있는 걸까?"</span> (문제 해결을 위한 고민의 시작)</p>
+        </div>
+
+        <!-- 슬라이드 12: 유레카! - '재학생' 너 때문이었구나! -->
+        <div class="slide" id="slide12">
+            <h2><i class="fas fa-lightbulb text-warning"></i>유레카! - <span class="text-aha">"재학생" 너 때문이었구나!</span></h2>
+            <h3><i class="fas fa-user-clock"></i>"재학생 데이터의 딜레마"</h3>
+            <p>졸업할지, 중퇴할지 미래가 불확실한 상태. (모델 학습에 혼란 야기 <i class="fas fa-spinner fa-spin"></i>)</p>
+            <h4><i class="fas fa-chart-pie"></i>'Target' 열 클래스별 분포 (제거 전)</h4>
+            <ul>
+                <li><i class="fas fa-user-graduate text-success"></i>Graduate: 2209명</li>
+                <li><i class="fas fa-user-minus text-danger"></i>Dropout: 1421명</li>
+                <li><i class="fas fa-user text-info"></i><strong>Enrolled: 794명</strong> (생각보다 많은 수! 하지만 과감히 제거 결정!)</li>
+            </ul>
+            <p style="margin-top:25px; text-align:center; font-weight:bold; font-size:1.1em;" class="text-danger"><i class="fas fa-scissors"></i>결단: "미래가 불확실한 데이터는 잠시 안녕! 확실한 데이터로 승부하자!"</p>
+        </div>
+
+        <!-- 슬라이드 13: 머신러닝 2차 시도 - ✨ 빛이 보이기 시작했다! -->
+        <div class="slide" id="slide13">
+            <h2><i class="fas fa-rocket text-success"></i>머신러닝 2차 시도 - <span class="text-success">빛이 보이기 시작했다!</span></h2>
+            <p><i class="fas fa-tachometer-alt text-success"></i><strong>"정확도가 수직 상승!"</strong> (실제 향상된 정확도 수치 제시하며 드라마틱한 효과 강조)</p>
+            <p><i class="fas fa-medal text-warning"></i>수많은 모델 중 최고의 성능을 보인 <span class="text-focus">"우리의 에이스"</span> 모델 선정! (LightGBM 언급)</p>
+            <h3><i class="fas fa-tools"></i>하이퍼파라미터 튜닝 여정</h3>
+            <p>랜덤 서치, 그리드 서치를 통한 최적의 파라미터 탐색 과정 요약.</p>
+            <div class="img-placeholder">(관련 시각 자료: 튜닝 과정이나 결과 비교 그래프 삽입 공간)<br>"최고의 성능을 짜내기 위한 저희의 눈물겨운 노력이었습니다! <i class="far fa-grin-stars"></i>"</div>
+        </div>
+
+        <!-- 슬라이드 14: 딥러닝 도전! - AI의 또 다른 가능성 탐색 -->
+        <div class="slide" id="slide14">
+            <h2><i class="fas fa-brain"></i>딥러닝 도전! - <span style="color: #6610f2;">AI의 또 다른 가능성 탐색</span></h2>
+            <p><i class="fas fa-network-wired"></i>딥러닝(ANN) 모델 간략 소개 및 시도.</p>
+            <p><i class="far fa-clock"></i><strong>EarlyStopping:</strong> <span class="text-focus">"AI도 지칠 땐 쉬어야죠!"</span> (과대적합 방지, 효율적 학습)</p>
+            <p><i class="fas fa-poll-h"></i>결과 및 소감: (현재 데이터에서는 머신러닝 모델 우세, 하지만 딥러닝의 무한한 가능성 언급)</p>
+            <p style="text-align:center; font-weight:bold; margin-top:20px;" class="text-info"><i class="fas fa-infinity"></i>"도전은 계속된다!" (다양한 시도 자체에 의미 부여)</p>
+        </div>
+
+        <!-- 슬라이드 15: 스트림릿 웹앱 - 우리의 결과물을 눈앞에! -->
+        <div class="slide" id="slide15">
+             <h2><i class="fas fa-laptop-code"></i>스트림릿 웹앱 - <span style="color: #fd7e14;">우리의 결과물을 눈앞에!</span></h2>
+             <p><i class="fas fa-paint-brush"></i><strong>"코딩, 코딩, 또 코딩!"</strong>: 스트림릿 웹앱 개발 과정 간략 소개. (지난 기수 자료 참고하며 디자인 방향 설정)</p>
+             <div class="img-placeholder" style="height: auto; display:flex; flex-direction:column; gap:10px;">
+                (스트림릿 웹앱 - 학생 정보 입력 화면 스크린샷) <br>
+                <i class="fas fa-arrow-down" style="font-size:1.5em;"></i><br>
+                (스트림릿 웹앱 - 예측 결과 화면 스크린샷) <br>
+                <i class="fas fa-arrow-down" style="font-size:1.5em;"></i><br>
+                (스트림릿 웹앱 - (가능하다면) 추가 분석 정보 화면 스크린샷)
+            </div>
+        </div>
+
+        <!-- 슬라이드 16: 시스템 활용 방안 - 그래서 이걸로 뭘 할 수 있는데? -->
+        <div class="slide" id="slide16">
+            <h2><i class="fas fa-user-friends"></i>시스템 활용 방안 - <span style="color: #28a745;">그래서 이걸로 뭘 할 수 있는데?</span></h2>
+            <p><i class="fas fa-hands-helping text-success"></i><strong>실시간 예측:</strong> "학생 정보만 넣어주세요! AI가 바로 알려드립니다!" (Streamlit 시연 또는 시안 활용)</p>
+            <p><i class="fas fa-bell text-warning"></i>위험군 학생 <span class="text-focus">"조기 경보 시스템"</span>: 문제 발생 전 선제적 대응 가능.</p>
+            <p><i class="fas fa-comment-medical"></i><strong>"맞춤형 처방전":</strong> 예측 결과를 바탕으로 학생별 맞춤 상담 및 지원 프로그램 연계.</p>
+            <p><i class="fas fa-chart-pie text-info"></i>데이터 기반 학생 관리 문화: "더 이상 감으로만 하지 말아요~ 데이터가 있잖아요!"</p>
+            <div class="highlight-box" style="border-left-color: #28a745; margin-top:25px; background-color: #e6ffee;">
+                 <p style="font-weight:bold;"><i class="fas fa-graduation-cap text-success"></i>궁극적 효과: 중퇴율 감소! 졸업률 증가! 학생도 <i class="far fa-smile-beam"></i>! 선생님도 <i class="far fa-grin-beam"></i>! 사회도 <i class="far fa-laugh-beam"></i>!</p>
+            </div>
+        </div>
+
+        <!-- 슬라이드 17: 결론 및 제언 - 우리의 여정은 계속된다! -->
+        <div class="slide" id="slide17">
+            <h2><i class="fas fa-trophy text-warning"></i>결론 및 제언 - <span style="color: #0056b3;">우리의 여정은 계속된다!</span></h2>
+            <p><i class="fas fa-check-circle text-success"></i><strong>최종 성과:</strong> "LightGBM 모델로 <span class="text-focus">약 91.2%의 정확도 달성!</span> 미션 성공!"</p>
+            <p><i class="fas fa-lightbulb text-info"></i>프로젝트 의의: 데이터 기반 학생 지원의 밝은 미래 제시.</p>
+            <h3><i class="fas fa-arrow-alt-circle-up"></i>"업그레이드는 계속되어야 한다!" (향후 발전 방향)</h3>
+            <ul>
+                <li><i class="fas fa-brain"></i>모델 성능 UP! UP! (더 많은 데이터, 고급 Feature Engineering)</li>
+                <li><i class="fas fa-comment-dots"></i>"AI야, 왜 그렇게 생각했니?" - 모델 설명력 강화! (SHAP, LIME)</li>
+                <li><i class="fas fa-users"></i>"선생님, 이거 쓰기 편하세요?" - 사용자 친화적 인터페이스!</li>
+                <li><i class="fas fa-medkit"></i>"그래서 뭘 해줘야 할까요?" - 효과적인 개입 전략 구체화!</li>
+            </ul>
+            <p class="final-message center-text"><i class="fas fa-school"></i>"AI와 함께, 모든 학생의 <span class="text-team"><학교탈출넘버원></span> 등극을 응원합니다!" <i class="fas fa-thumbs-up"></i></p>
+        </div>
+
+        <!-- 슬라이드 18: Q&A - 궁금한 건 못 참지! -->
+        <div class="slide" id="slide18">
+             <div class="center-text"><i class="fas fa-comments big-icon-title" style="color:#17a2b8;"></i></div>
+            <h2 class="center-text" style="border-bottom:none; font-size: 2.5em;">❓ Q & A ❓</h2>
+            <p class="center-text" style="font-size: 1.3em; margin-top: 40px;">여러분의 <span class="text-focus">빛나는 질문</span>을 기다립니다!</p>
+            <p class="center-text" style="font-size: 1.3em; margin-top: 30px;">지금까지 <span class="text-team"><학교탈출넘버원></span>이었습니다! 감사합니다! <i class="fas fa-hands-clapping" style="color: #ffc107;"></i></p>
+        </div>
+
+    </div>
+
+    <div class="slide-footer">
+        <button onclick="prevSlide()"><i class="fas fa-chevron-left"></i> 이전</button>
+        <span id="slide-number">1 / 18</span>
+        <button onclick="nextSlide()">다음 <i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <script>
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.presentation-container .slide');
+        const slideNumberDisplay = document.getElementById('slide-number');
+        const totalSlides = slides.length;
+
+        function showSlide(index) {
+            slides.forEach((slide) => {
+                slide.classList.remove('active');
+            });
+            slides[index].classList.add('active');
+            slideNumberDisplay.textContent = `${index + 1} / ${totalSlides}`;
+        }
+
+        function nextSlide() {
+            currentSlideIndex = (currentSlideIndex + 1) % totalSlides;
+            showSlide(currentSlideIndex);
+        }
+
+        function prevSlide() {
+            currentSlideIndex = (currentSlideIndex - 1 + totalSlides) % totalSlides;
+            showSlide(currentSlideIndex);
+        }
+        showSlide(currentSlideIndex); // 초기 슬라이드 표시
+    </script>
+</body>
+</html>
